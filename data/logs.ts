@@ -14,9 +14,17 @@ export interface RequestLog {
 const EXPIRY = 90 * 24 * 60 * 60 * 1000;
 
 const logsById = (id: string): Deno.KvKey => ["id", id];
-const logsByPath = (path: string): Deno.KvKey => ["path", path];
-const logsByStatus = (status: number): Deno.KvKey => ["status", status];
-const logsBySearch = (search: string): Deno.KvKey => ["search", search];
+const logsByPath = (path: string, id: string): Deno.KvKey => ["path", path, id];
+const logsByStatus = (status: number, id: string): Deno.KvKey => [
+  "status",
+  status,
+  id,
+];
+const logsBySearch = (search: string, id: string): Deno.KvKey => [
+  "search",
+  search,
+  id,
+];
 
 export async function addLog(log: RequestLog): Promise<RequestLog> {
   const idKey = logsById(log.id);
@@ -24,8 +32,8 @@ export async function addLog(log: RequestLog): Promise<RequestLog> {
     .atomic()
     .check({ key: idKey, versionstamp: null })
     .set(idKey, log, { expireIn: EXPIRY })
-    .set(logsByPath(log.path), log.id, { expireIn: EXPIRY })
-    .set(logsBySearch(log.search), log.id, { expireIn: EXPIRY })
+    .set(logsByPath(log.path, log.id), idKey, { expireIn: EXPIRY })
+    .set(logsBySearch(log.search, log.id), idKey, { expireIn: EXPIRY })
     .commit();
 
   if (!res.ok) {
@@ -57,7 +65,7 @@ export async function finishLog({
   const res = await kv
     .atomic()
     .set(idKey, updatedLog)
-    .set(logsByStatus(status), id, { expireIn: EXPIRY })
+    .set(logsByStatus(status, id), idKey, { expireIn: EXPIRY })
     .commit();
 
   if (!res.ok) {
