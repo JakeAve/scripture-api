@@ -1,4 +1,4 @@
-import type { Context, Payload, Resp, ResponseProps } from "../main.ts";
+import type { Context, Payload, JSONObj, ResponseProps } from "../main.ts";
 import { parseRef as parseRefServer } from "@jakeave/scripture-ref/server";
 import { parseRef } from "@jakeave/scripture-ref/client";
 
@@ -11,10 +11,10 @@ export default function parse(context: Context, resp: ResponseProps): Payload {
   }
 
   if (content === "true") {
-    const result = parseRefServer(ref) as unknown as Resp;
+    const result = parseRefServer(ref) as unknown as JSONObj;
     return resp.respond({ result, input: ref });
   }
 
-  const result = parseRef(ref) as unknown as Resp;
+  const result = parseRef(ref) as unknown as JSONObj;
   return resp.respond({ result, input: ref });
 }

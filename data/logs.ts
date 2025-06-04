@@ -26,7 +26,7 @@ const logsBySearch = (search: string, id: string): Deno.KvKey => [
   id,
 ];
 
-export async function addLog(log: RequestLog): Promise<RequestLog> {
+export async function addLog(log: RequestLog): Promise<RequestLog | null> {
   const idKey = logsById(log.id);
   const res = await kv
     .atomic()
@@ -38,6 +38,7 @@ export async function addLog(log: RequestLog): Promise<RequestLog> {
 
   if (!res.ok) {
     console.error(`Failed to create reqLog ${JSON.stringify(log)}`);
+    return null;
   }
 
   return log;
@@ -51,13 +52,13 @@ export async function finishLog({
   id: string;
   time: number;
   status: number;
-}): Promise<RequestLog | void> {
+}): Promise<RequestLog | null> {
   const idKey = logsById(id);
   const log = await kv.get<RequestLog>(idKey);
 
   if (!log.value) {
     console.error(`Could not find log ${id}`);
-    return;
+    return null;
   }
 
   const updatedLog = { ...log.value, time, status } as RequestLog;
@@ -70,6 +71,7 @@ export async function finishLog({
 
   if (!res.ok) {
     console.error(`Failed to create reqLog ${JSON.stringify(updatedLog)}`);
+    return null;
   }
 
   return updatedLog;

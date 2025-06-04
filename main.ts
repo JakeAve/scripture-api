@@ -2,31 +2,33 @@ import "@std/dotenv/load";
 import routes from "./routes.ts";
 import { ReqLog } from "./lib/ReqLog.ts";
 
-export interface Resp {
-  [key: string]: string | number | string[] | number[] | Resp;
+export interface JSONObj {
+  [key: string]: string | number | string[] | number[] | JSONObj;
 }
 
 export type ResponseOptions = {
   status?: number;
+  type?: "application/json" | "image/png" | "image/x-icon";
 };
 
 export type Payload = {
   status: number;
-  data: Resp | Promise<Resp>;
+  data: JSONObj | Promise<JSONObj> | Uint8Array | Promise<Uint8Array>;
+  type: "application/json" | "image/png" | "image/x-icon";
 };
 
 export type ResponseProps = {
-  respond: (data: Resp, options?: ResponseOptions) => Payload;
+  respond: (data: JSONObj | Uint8Array, options?: ResponseOptions) => Payload;
 };
 
 export type Context = {
   req: Request;
   url: URL;
   params: Record<string, string | number>;
-  data: Resp;
+  data: JSONObj;
 };
 
-function handler(req: Request): Response | Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   const start = new Date();
   const url = new URL(req.url);
   const pathname = url.pathname;
@@ -34,7 +36,8 @@ function handler(req: Request): Response | Promise<Response> {
   const reqLog = new ReqLog().start({ created_at: start, url });
   console.log("Request", url.href);
 
-  const ip = req.headers.get("x-forwarded-for") ||
+  const ip =
+    req.headers.get("x-forwarded-for") ||
     req.headers.get("cf-connecting-ip") ||
     req.headers.get("remoteAddress");
 
@@ -52,12 +55,16 @@ function handler(req: Request): Response | Promise<Response> {
   }
 
   const resp: ResponseProps = {
-    respond: (data: Resp, options?: ResponseOptions) => {
-      return { data, status: options?.status || 200 };
+    respond: (data: JSONObj | Uint8Array, options?: ResponseOptions) => {
+      return {
+        data,
+        status: options?.status || 200,
+        type: options?.type || "application/json",
+      };
     },
   };
 
-  let payload: undefined | Payload;
+  let result: undefined | Payload;
 
   for (const route of routes) {
     const match = pathname.match(route.pattern);
@@ -71,43 +78,53 @@ function handler(req: Request): Response | Promise<Response> {
         }
         params[name] = m;
       });
-      payload = route.handler({ req, url, params, data: {} }, resp);
+      result = await route.handler({ req, url, params, data: {} }, resp);
       break;
     }
   }
 
-  if (!payload) {
-    payload = {
+  if (!result) {
+    result = {
       status: 404,
       data: { error: "Not Found" },
+      type: "application/json",
     };
   }
 
-  if (payload.data instanceof Promise) {
-    payload.data.then((res) => (payload.data = res));
+  if (result.data instanceof Promise) {
+    await result.data;
   }
 
   const processingTime = new Date().getTime() - start.getTime();
 
-  const meta: Resp = {
-    path: pathname,
-    search: url.search,
-    processingTime: `${processingTime}ms`,
-    status: payload.status,
+  const headers = {
+    "Content-Type": result.type,
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
   };
 
-  (payload.data as Resp).meta = meta;
+  let payload: string | Uint8Array;
 
-  const response = new Response(JSON.stringify(payload.data), {
-    status: payload.status,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
+  if (result.data instanceof Uint8Array) {
+    payload = result.data;
+  } else {
+    const meta: JSONObj = {
+      path: pathname,
+      search: url.search,
+      processingTime: `${processingTime}ms`,
+      status: result.status,
+    };
+    (result.data as JSONObj).meta = meta;
+    payload = JSON.stringify(result.data);
+  }
+
+  const response = new Response(payload, {
+    status: result.status,
+    headers,
   });
-  reqLog.end({ time: processingTime, status: payload.status });
+  
+  reqLog.end({ time: processingTime, status: result.status });
   return response;
 }
 

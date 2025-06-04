@@ -2,8 +2,8 @@
   "description": "Rest api for finding and formatting scripture references from the canon of the Church of Jesus Christ of Latter-day Saints",
   "version": "0.0.0",
   "tasks": {
-    "dev": "deno run --unstable-kv --watch --allow-net --allow-read=.env,.data --allow-write=.data --allow-env main.ts",
-    "start": "deno run --unstable-kv --allow-net --allow-read=.env,.data --allow-write=.data --allow-env main.ts"
+    "dev": "deno run --unstable-kv --watch --allow-net --allow-read=.env,.data,static --allow-write=.data --allow-env main.ts",
+    "start": "deno run --unstable-kv --allow-net --allow-read=.env,.data,static --allow-write=.data --allow-env main.ts"
   },
   "imports": {
     "@jakeave/scripture-ref": "jsr:@jakeave/scripture-ref@^0.0.6",

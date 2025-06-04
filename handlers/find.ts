@@ -1,4 +1,4 @@
-import type { Context, Payload, Resp, ResponseProps } from "../main.ts";
+import type { Context, Payload, JSONObj, ResponseProps } from "../main.ts";
 import { findRef } from "@jakeave/scripture-ref/server";
 import type { BookName } from "@jakeave/scripture-ref/types";
 
@@ -18,13 +18,20 @@ export default function find(context: Context, resp: ResponseProps): Payload {
   )[];
   const max = context.url.searchParams.get("max");
 
-  const maxResults = max as unknown as number ?? undefined;
+  const maxResults = (max as unknown as number) ?? undefined;
+
+  if (maxResults > 100) {
+    return resp.respond(
+      { error: `Max allowance is 100 results. Received ${maxResults}.` },
+      { status: 400 }
+    );
+  }
 
   const results = findRef(ref, {
     books,
     volumes,
     maxResults,
-  }) as unknown as Resp;
+  }) as unknown as JSONObj;
 
   return resp.respond({ results, input: ref });
 }
