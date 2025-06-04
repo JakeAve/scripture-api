@@ -39,13 +39,13 @@ const routes: Route[] = [
   {
     pattern: /^\/v1\/find$/,
     paramNames: [],
-    path: "/v1/find",
+    path: "/v1/find?ref=&book=&volume=&max=",
     handler: find,
   },
   {
     pattern: /^\/v1\/parse$/,
     paramNames: [],
-    path: "/v1/parse",
+    path: "/v1/parse?ref=&content=",
     handler: parse,
   },
   {
