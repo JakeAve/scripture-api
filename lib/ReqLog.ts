@@ -10,13 +10,22 @@ export class ReqLog {
     this.#id = monotonicUlid();
   }
 
-  start({ created_at, url }: { created_at: Date; url: URL }): ReqLog {
+  start({
+    created_at,
+    url,
+    ip,
+  }: {
+    created_at: Date;
+    url: URL;
+    ip: string;
+  }): ReqLog {
     const id = this.#id;
     const log: RequestLog = {
       created_at,
       id,
       path: url.pathname,
       search: url.search,
+      ip,
     };
 
     this.#addingPromise = addLog(log);

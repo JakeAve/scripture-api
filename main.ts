@@ -1,6 +1,7 @@
 import "@std/dotenv/load";
 import routes from "./routes.ts";
 import { ReqLog } from "./lib/ReqLog.ts";
+import { getBlockedIps } from "./data/blockedIPs.ts";
 
 export interface JSONObj {
   [key: string]: string | number | string[] | number[] | JSONObj;
@@ -26,22 +27,25 @@ export type Context = {
   url: URL;
   params: Record<string, string | number>;
   data: JSONObj;
+  ip: string;
 };
 
-async function handler(req: Request): Promise<Response> {
+async function handler(
+  req: Request,
+  info: Deno.ServeHandlerInfo
+): Promise<Response> {
   const start = new Date();
   const url = new URL(req.url);
   const pathname = url.pathname;
 
-  const reqLog = new ReqLog().start({ created_at: start, url });
-  console.log("Request", url.href);
-
   const ip =
-    req.headers.get("x-forwarded-for") ||
-    req.headers.get("cf-connecting-ip") ||
-    req.headers.get("remoteAddress");
-
+    info.remoteAddr && info.remoteAddr.transport === "tcp"
+      ? info.remoteAddr.hostname
+      : "unknown";
   console.log("Client IP:", ip);
+
+  const reqLog = new ReqLog().start({ created_at: start, url, ip });
+  console.log("Request:", url.href);
 
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -78,7 +82,7 @@ async function handler(req: Request): Promise<Response> {
         }
         params[name] = m;
       });
-      result = await route.handler({ req, url, params, data: {} }, resp);
+      result = await route.handler({ req, url, params, data: {}, ip }, resp);
       break;
     }
   }
@@ -93,6 +97,13 @@ async function handler(req: Request): Promise<Response> {
 
   if (result.data instanceof Promise) {
     await result.data;
+  }
+
+  const blockedIp = (result.data as JSONObj).blocked as string;
+
+  if (blockedIp) {
+    blockedIps[blockedIp] = true;
+    delete (result.data as JSONObj).blocked;
   }
 
   const processingTime = new Date().getTime() - start.getTime();
@@ -123,10 +134,12 @@ async function handler(req: Request): Promise<Response> {
     status: result.status,
     headers,
   });
-  
+
   reqLog.end({ time: processingTime, status: result.status });
   return response;
 }
+
+const blockedIps = await getBlockedIps();
 
 Deno.serve({
   port: Number(Deno.env.get("PORT")),

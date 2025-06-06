@@ -4,6 +4,7 @@ const kv = await Deno.openKv(Deno.env.get("KV_PATH"));
 
 export interface RequestLog {
   id: string;
+  ip: string;
   path: string;
   search: string;
   time?: number;
@@ -25,15 +26,18 @@ const logsBySearch = (search: string, id: string): Deno.KvKey => [
   search,
   id,
 ];
+const logByIp = (ip: string, id: string): Deno.KvKey => ["ip", ip, id];
 
 export async function addLog(log: RequestLog): Promise<RequestLog | null> {
-  const idKey = logsById(log.id);
+  const { id } = log;
+  const idKey = logsById(id);
   const res = await kv
     .atomic()
     .check({ key: idKey, versionstamp: null })
     .set(idKey, log, { expireIn: EXPIRY })
-    .set(logsByPath(log.path, log.id), idKey, { expireIn: EXPIRY })
-    .set(logsBySearch(log.search, log.id), idKey, { expireIn: EXPIRY })
+    .set(logsByPath(log.path, id), idKey, { expireIn: EXPIRY })
+    .set(logsBySearch(log.search, id), idKey, { expireIn: EXPIRY })
+    .set(logByIp(log.ip, id), idKey, { expireIn: EXPIRY })
     .commit();
 
   if (!res.ok) {

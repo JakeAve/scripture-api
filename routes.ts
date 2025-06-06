@@ -3,6 +3,7 @@ import home from "./handlers/home.ts";
 import parse from "./handlers/parse.ts";
 import reference from "./handlers/reference.ts";
 import serverStatic from "./handlers/serveStatic.ts";
+import timeout from "./handlers/timeout.ts";
 import type { Context, Payload, ResponseProps } from "./main.ts";
 
 export type RouteHandler = (
@@ -83,6 +84,12 @@ const routes: Route[] = [
       context.data.fileType = "image/png";
       return serverStatic(context, resp);
     },
+  },
+  {
+    pattern: /config|\.env|\/env|\.git|security|\.DS_Store/,
+    paramNames: [],
+    path: "/about",
+    handler: timeout,
   },
 ];
 
