@@ -2,6 +2,7 @@ import "@std/dotenv/load";
 import routes from "./routes.ts";
 import { ReqLog } from "./lib/ReqLog.ts";
 import { getBlockedIps } from "./data/blockedIPs.ts";
+import about from "./handlers/about.ts";
 
 export interface JSONObj {
   [key: string]: string | number | string[] | number[] | JSONObj;
@@ -70,20 +71,24 @@ async function handler(
 
   let result: undefined | Payload;
 
-  for (const route of routes) {
-    const match = pathname.match(route.pattern);
-    if (match) {
-      const params: Record<string, string | number> = {};
-      route.paramNames.forEach((name, idx) => {
-        let m: string | number = match[idx + 1];
-        const num = Number(m);
-        if (!isNaN(num)) {
-          m = num;
-        }
-        params[name] = m;
-      });
-      result = await route.handler({ req, url, params, data: {}, ip }, resp);
-      break;
+  if (blockedIps[ip]) {
+    result = about({ req, url, params: {}, data: {}, ip }, resp);
+  } else {
+    for (const route of routes) {
+      const match = pathname.match(route.pattern);
+      if (match) {
+        const params: Record<string, string | number> = {};
+        route.paramNames.forEach((name, idx) => {
+          let m: string | number = match[idx + 1];
+          const num = Number(m);
+          if (!isNaN(num)) {
+            m = num;
+          }
+          params[name] = m;
+        });
+        result = await route.handler({ req, url, params, data: {}, ip }, resp);
+        break;
+      }
     }
   }
 
@@ -104,6 +109,9 @@ async function handler(
   if (blockedIp) {
     blockedIps[blockedIp] = true;
     delete (result.data as JSONObj).blocked;
+    await new Promise((resolve) => {
+      setTimeout(resolve, Number(Deno.env.get("BAD_TIMEOUT")) || 600000);
+    });
   }
 
   const processingTime = new Date().getTime() - start.getTime();
