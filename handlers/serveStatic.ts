@@ -2,7 +2,7 @@ import type { Context, Payload, ResponseProps } from "../main.ts";
 
 export default async function serverStatic(
   context: Context,
-  resp: ResponseProps
+  resp: ResponseProps,
 ): Promise<Payload> {
   try {
     const fileName = context.data.fileName;

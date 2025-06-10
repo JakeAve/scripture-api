@@ -1,0 +1,4 @@
+- [x] Caching, expiry, etag
+- [ ] robots.txt ?
+- [ ] sitemap.xml ?
+- [ ] api keys

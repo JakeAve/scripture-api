@@ -1,6 +1,7 @@
-import type { Context, Payload, JSONObj, ResponseProps } from "../main.ts";
+import type { Context, JSONObj, Payload, ResponseProps } from "../main.ts";
 import { findRef } from "@jakeave/scripture-ref/server";
 import type { BookName } from "@jakeave/scripture-ref/types";
+import { makeCacheHeaders } from "../lib/makeCacheHeaders.ts";
 
 export default function find(context: Context, resp: ResponseProps): Payload {
   const ref = context.url.searchParams.get("ref");
@@ -23,7 +24,7 @@ export default function find(context: Context, resp: ResponseProps): Payload {
   if (maxResults > 100) {
     return resp.respond(
       { error: `Max allowance is 100 results. Received ${maxResults}.` },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -33,5 +34,5 @@ export default function find(context: Context, resp: ResponseProps): Payload {
     maxResults,
   }) as unknown as JSONObj;
 
-  return resp.respond({ results, input: ref });
+  return resp.respond({ results, input: ref }, { headers: makeCacheHeaders() });
 }

@@ -8,7 +8,7 @@ import type { Context, Payload, ResponseProps } from "./main.ts";
 
 export type RouteHandler = (
   context: Context,
-  response: ResponseProps
+  response: ResponseProps,
 ) => Payload | Promise<Payload>;
 
 interface Route {

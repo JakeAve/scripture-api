@@ -11,12 +11,14 @@ export interface JSONObj {
 export type ResponseOptions = {
   status?: number;
   type?: "application/json" | "image/png" | "image/x-icon";
+  headers?: HeadersInit;
 };
 
 export type Payload = {
   status: number;
   data: JSONObj | Promise<JSONObj> | Uint8Array | Promise<Uint8Array>;
   type: "application/json" | "image/png" | "image/x-icon";
+  headers: HeadersInit;
 };
 
 export type ResponseProps = {
@@ -59,12 +61,26 @@ async function handler(
     });
   }
 
+  const staticEtag = Deno.env.get("STATIC_E_TAG");
+  const requestEtag = req.headers.get("If-None-Match");
+
+  if (requestEtag === staticEtag) {
+    return new Response(null, {
+      status: 304,
+      headers: {
+        ETag: staticEtag,
+        "Cache-Control": "public, max-age=604800",
+      },
+    });
+  }
+
   const resp: ResponseProps = {
     respond: (data: JSONObj | Uint8Array, options?: ResponseOptions) => {
       return {
         data,
         status: options?.status || 200,
         type: options?.type || "application/json",
+        headers: options?.headers || {},
       };
     },
   };
@@ -97,6 +113,7 @@ async function handler(
       status: 404,
       data: { error: "Not Found" },
       type: "application/json",
+      headers: {},
     };
   }
 
@@ -121,6 +138,7 @@ async function handler(
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
+    ...result.headers,
   };
 
   let payload: string | Uint8Array;

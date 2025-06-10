@@ -3,7 +3,8 @@
 A REST API for finding and formatting scripture references from the canon of the
 Church of Jesus Christ of Latter-day Saints.
 
-**Disclaimer: Not an official publication of the Church of Jesus Christ of Latter-day Saints**
+**Disclaimer: Not an official publication of the Church of Jesus Christ of
+Latter-day Saints**
 
 ## Features
 
