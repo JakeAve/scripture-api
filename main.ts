@@ -172,6 +172,6 @@ Deno.serve({
   hostname: Deno.env.get("HOSTNAME"),
   handler,
   onListen({ port, hostname }) {
-    console.log(`Server started at http://${hostname}:${port}`);
+    console.log(`Server started at http://[${hostname}]:${port}`);
   },
 });
