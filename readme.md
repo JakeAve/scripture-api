@@ -58,7 +58,8 @@ Finds scripture references matching the query.
 - `book` (optional, repeatable): Restrict search to specific book(s).
 - `volume` (optional, repeatable): Restrict search to specific volume(s) (`ot`,
   `nt`, `bom`, `dc`, `pgp`) to help with performance
-- `max` (optional): Maximum number of results (max 100).
+- `start` (default 0) start index
+- `end` (default 5) end index, EXCLUDING this index. Example: `start=0&end=5` will be 0, 1, 2, 3, 4
 
 **Examples:**
 
@@ -93,7 +94,7 @@ Finds scripture references matching the query.
 }
 ```
 
-- `curl "http://localhost:8000/v1/find?ref=small+and+simple&max=1&book=Alma"`
+- `curl "http://localhost:8000/v1/find?ref=small+and+simple&start=0&end=1&book=Alma"`
 
 ```js
 {
