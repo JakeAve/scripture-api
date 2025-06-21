@@ -86,7 +86,7 @@ const routes: Route[] = [
     },
   },
   {
-    pattern: /config|\.env|\/env|\.git|security|\.DS_Store|credentials|(\.js$)/,
+    pattern: /config|\.env|\/env|\.git|\.DS_Store|credentials|(\.js$)/,
     paramNames: [],
     path: "/about",
     handler: about,
