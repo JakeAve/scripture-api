@@ -1,5 +1,7 @@
 - [x] Caching, expiry, etag
-- [ ] robots.txt ?
-- [ ] security.txt
+- [x] robots.txt ?
+- [x] security.txt
 - [ ] sitemap.xml ?
 - [ ] api keys
+- [ ] e2e tests
+- [ ] unit tests

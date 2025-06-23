@@ -1,0 +1,25 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Contact: jakesmailrobot@gmail.com
+Expires: 2026-06-20T23:00:00.000Z
+Encryption: https://keys.openpgp.org/vks/v1/by-fingerprint/20C8F9299F5900040E48C12C454F0481E4D4017F
+Preferred-Languages: en
+Canonical: https://api.gospellibrary.link/.well-known/security.txt
+Repository: https://github.com/JakeAve/scripture-api
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEIMj5KZ9ZAAQOSMEsRU8EgeTUAX8FAmhYz8sACgkQRU8EgeTU
+AX8Nvg//ctcVXISqMVR9rwHtgf0/zihuK5ogp+2EX0y9+KnV1A/z7S2Eun/goY5L
+fwf+ox92HfBVjMOIh9GoLHbfCrDM/SMvO/l6Ku0E4VXkyMZb1bmEu5ZuI0YfmKt1
+1xmVS3RSClaA0rfC7SCr/rYJu/KAF2kNj/EXD1fSPS3denQWqiM1rirS/wJObVmn
+ffOkFcru5L7hPtf6BFdNXRgEVFNqHjXKtnOMLXv16LlsRqpZVQzTlUPuJLTY4t0s
+mYGqeG+sMbGTkLOVIFixy972/rb1df9c02si3nFnUeBM0Kd6p2n46uSnPZYVZNku
+o/SIXIAsHkOm1PEnqbfJJMejnPWEspR4XU5ao2uxsbyztRj8WyXSmbIVObemmRGX
+EY5C9w5n9pzLoHtNqZpvYe8byEZTogsiZr6/X39i+QjgpLE2io30wbx/6EHN+f0T
+LGsZmqpCk59QGRWYIYYuUjIXeoyf8Y1k2y580XT04VVd/SBpl9zRYQGWHP8yAoKo
+UvFI6UyCLU1sop429KkLQc7HdrBB8MMS4C2cI+byOJf2CKr77cQgi8r0VAEl3ycF
+ddnbmiSRHdvSFdg+DENlp+X+TdvphYENqhpALj+qLsOem5uuXweSs38qLrl3F2lu
+Inj4la8RQpsG1WD1i8Ra5xzEgMIHAvZZkrbNLu5ArL6L/KPz29w=
+=C6S/
+-----END PGP SIGNATURE-----

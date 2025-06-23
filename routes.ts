@@ -8,7 +8,7 @@ import type { Context, Payload, ResponseProps } from "./main.ts";
 
 export type RouteHandler = (
   context: Context,
-  response: ResponseProps,
+  response: ResponseProps
 ) => Payload | Promise<Payload>;
 
 interface Route {
@@ -82,6 +82,26 @@ const routes: Route[] = [
     handler: (context, resp) => {
       context.data.fileName = "apple-touch-icon.png";
       context.data.fileType = "image/png";
+      return serverStatic(context, resp);
+    },
+  },
+  {
+    pattern: /^\/robots\.txt$/,
+    paramNames: [],
+    path: "/robots.txt",
+    handler: (context, resp) => {
+      context.data.fileName = "robots.txt";
+      context.data.fileType = "text/plain";
+      return serverStatic(context, resp);
+    },
+  },
+  {
+    pattern: /^\/(?:\.well-known\/)?security\.txt$/,
+    paramNames: [],
+    path: "/security.txt",
+    handler: (context, resp) => {
+      context.data.fileName = "security.txt";
+      context.data.fileType = "text/plain";
       return serverStatic(context, resp);
     },
   },

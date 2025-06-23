@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /v1/find
+Allow: /v1/
+Allow: /v1/*/
+Allow: /v1/*/*
+Allow: /v1/*/*/*
+
+# Allow root and static assets
+Allow: /
+
+# Optional: Disallow crawling of query-heavy endpoints
+Disallow: /v1/parse
+
+# End of file
