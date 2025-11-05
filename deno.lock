@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@jakeave/scripture-ref@^0.0.6": "0.0.6",
+    "jsr:@jakeave/scripture-ref@^0.0.9": "0.0.9",
     "jsr:@std/assert@1": "1.0.13",
     "jsr:@std/dotenv@~0.225.5": "0.225.5",
     "jsr:@std/internal@^1.0.6": "1.0.6",
@@ -9,8 +9,8 @@
     "npm:fastest-levenshtein@^1.0.16": "1.0.16"
   },
   "jsr": {
-    "@jakeave/scripture-ref@0.0.6": {
-      "integrity": "d282d931dad04a991d961d5a5dcec71110b445ce5646db888e7f174a55a62b2e",
+    "@jakeave/scripture-ref@0.0.9": {
+      "integrity": "889ae9b16517aa57aec8e374c04d896b7390bbbb90af51870abc59d2fb0e4c31",
       "dependencies": [
         "npm:fastest-levenshtein"
       ]
@@ -38,7 +38,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@jakeave/scripture-ref@^0.0.6",
+      "jsr:@jakeave/scripture-ref@^0.0.9",
       "jsr:@std/assert@1",
       "jsr:@std/dotenv@~0.225.5",
       "jsr:@std/ulid@1"
