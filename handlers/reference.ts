@@ -73,7 +73,7 @@ export default function reference(
     const reference = parseRef(stringRef);
 
     return resp.respond(
-      { content: reference.content as string },
+      { content: [reference.content as string] },
       {
         headers: makeCacheHeaders(),
       }
