@@ -1,5 +1,5 @@
 import type { Context, Payload, ResponseProps } from "../main.ts";
-import { books, contents } from "@jakeave/scripture-ref/server";
+import { books, contents, parseRef } from "@jakeave/scripture-ref/server";
 import type { Book, BookName } from "@jakeave/scripture-ref/types";
 import { makeCacheHeaders } from "../lib/makeCacheHeaders.ts";
 
@@ -11,7 +11,7 @@ class VerseOutOfRange extends Error {
 
 export default function reference(
   context: Context,
-  resp: ResponseProps,
+  resp: ResponseProps
 ): Payload {
   try {
     const slug = context.params.book as keyof typeof books;
@@ -21,7 +21,7 @@ export default function reference(
     if (!book) {
       return resp.respond(
         { error: `${slug} is not a valid book` },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -30,18 +30,18 @@ export default function reference(
     if (!chapter) {
       return resp.respond(
         { error: `Invalid chapter ${context.params.chapter}` },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (chapter < 1 || chapter > book.chapters.length) {
       return resp.respond(
         {
-          error: `Invalid ${
-            slug === "dc" ? "section" : "chapter"
-          } for ${book.name} ${context.params.chapter}`,
+          error: `Invalid ${slug === "dc" ? "section" : "chapter"} for ${
+            book.name
+          } ${context.params.chapter}`,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -56,43 +56,28 @@ export default function reference(
     if (typeof verses === "number") {
       if (verses < 1 || verses > content.length) {
         throw new VerseOutOfRange(
-          `Verse out of range ${book.name} ${chapter}:${verses}`,
+          `Verse out of range ${book.name} ${chapter}:${verses}`
         );
       }
 
       return resp.respond(
         { content: [content[verses - 1]] },
-        { headers: makeCacheHeaders() },
+        { headers: makeCacheHeaders() }
       );
     }
 
     const ranges = verses.split("/");
 
-    const verseContent: string[] = [];
+    const stringRef = `${book.name} ${chapter}:${ranges.join(",")}`;
 
-    for (const r of ranges) {
-      const matches = r.match(/\d+/g)?.reduce<number[]>((acc, num) => {
-        const n = Number(num);
-        if (n < 0 || n > content.length) {
-          throw new VerseOutOfRange(
-            `Verse out of range ${book.name} ${chapter}:${n}`,
-          );
-        }
-        return n > 0 && n < content.length ? [...acc, n] : acc;
-      }, []);
+    const reference = parseRef(stringRef);
 
-      if (matches && matches.length === 2) {
-        verseContent.push(...content.slice(matches[0] - 1, matches[1]));
+    return resp.respond(
+      { content: reference.content as string },
+      {
+        headers: makeCacheHeaders(),
       }
-
-      if (matches && matches.length === 1) {
-        verseContent.push(content[matches[0] - 1]);
-      }
-    }
-
-    return resp.respond({ content: verseContent }, {
-      headers: makeCacheHeaders(),
-    });
+    );
   } catch (e) {
     if (e instanceof VerseOutOfRange) {
       return resp.respond({ error: e.message }, { status: 400 });
