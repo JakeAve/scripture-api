@@ -1,16 +1,16 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@jakeave/scripture-ref@^0.0.9": "0.0.9",
+    "jsr:@jakeave/scripture-ref@^0.0.10": "0.0.10",
     "jsr:@std/assert@1": "1.0.13",
-    "jsr:@std/dotenv@~0.225.5": "0.225.5",
+    "jsr:@std/dotenv@~0.225.5": "0.225.6",
     "jsr:@std/internal@^1.0.6": "1.0.6",
     "jsr:@std/ulid@1": "1.0.0",
     "npm:fastest-levenshtein@^1.0.16": "1.0.16"
   },
   "jsr": {
-    "@jakeave/scripture-ref@0.0.9": {
-      "integrity": "889ae9b16517aa57aec8e374c04d896b7390bbbb90af51870abc59d2fb0e4c31",
+    "@jakeave/scripture-ref@0.0.10": {
+      "integrity": "28c6b616ef0afd61401664924d5f867dce8a56c82f23a54852219dc141755d59",
       "dependencies": [
         "npm:fastest-levenshtein"
       ]
@@ -23,6 +23,9 @@
     },
     "@std/dotenv@0.225.5": {
       "integrity": "9ce6f9d0ec3311f74a32535aa1b8c62ed88b1ab91b7f0815797d77a6f60c922f"
+    },
+    "@std/dotenv@0.225.6": {
+      "integrity": "1d6f9db72f565bd26790fa034c26e45ecb260b5245417be76c2279e5734c421b"
     },
     "@std/internal@1.0.6": {
       "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
@@ -38,7 +41,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@jakeave/scripture-ref@^0.0.9",
+      "jsr:@jakeave/scripture-ref@^0.0.10",
       "jsr:@std/assert@1",
       "jsr:@std/dotenv@~0.225.5",
       "jsr:@std/ulid@1"
