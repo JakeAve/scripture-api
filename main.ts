@@ -168,7 +168,7 @@ async function handler(
 const blockedIps = await getBlockedIps();
 
 Deno.serve({
-  port: Number(Deno.env.get("PORT") || undefined),
+  port: Number(Deno.env.get("PORT")) || undefined,
   hostname: Deno.env.get("HOSTNAME") || undefined,
   handler,
   onListen({ port, hostname }) {
