@@ -168,8 +168,8 @@ async function handler(
 const blockedIps = await getBlockedIps();
 
 Deno.serve({
-  port: Number(Deno.env.get("PORT")),
-  hostname: Deno.env.get("HOSTNAME"),
+  port: Number(Deno.env.get("PORT") || undefined),
+  hostname: Deno.env.get("HOSTNAME") || undefined,
   handler,
   onListen({ port, hostname }) {
     console.log(`Server started at http://[${hostname}]:${port}`);
